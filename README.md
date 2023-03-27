@@ -28,7 +28,7 @@ If you would like to contribute to ChatMAUI, feel free to submit a pull request.
 
 ## License
 
-ChatMAUI is licensed under the MIT License. See the LICENSE file for more information.
+ChatMAUI is licensed under the GNU General Public License v3.0 License. See the LICENSE file for more information.
 
 ## Note
 This README is made with chatgpt but with some edits.
