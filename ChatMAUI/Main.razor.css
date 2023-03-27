@@ -1,0 +1,335 @@
+﻿/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f5f5f5;
+    padding: 10px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-left {
+    flex: 1;
+}
+
+.header-middle {
+    flex: 2;
+    text-align: center;
+}
+
+.header-right {
+    flex: 1;
+    text-align: right;
+}
+
+.conversation-toggle {
+    background-color: transparent;
+    border: none;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.settings-toggle {
+    background-color: transparent;
+    border: none;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.title {
+    all: unset;
+    margin: 0;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    border: 0px;
+}
+
+/* Main */
+.main {
+    display: flex;
+    height: calc(100vh - 140px);
+}
+
+.chattabs-panel {
+    flex: 1;
+    background-color: #f5f5f5;
+    transition: all 0.3s ease-in-out;
+    transform: translateX(-100%);
+    position: absolute;
+}
+
+    .chattabs-panel.open {
+        transform: translateX(0%);
+    }
+
+.chattabs {
+    padding: 10px;
+}
+
+    .chattabs ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .chattabs li {
+        margin-bottom: 10px;
+    }
+
+    .chattabs a {
+        display: block;
+        padding: 10px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        color: #333;
+        text-decoration: none;
+    }
+
+        .chattabs a:hover {
+            background-color: #f5f5f5;
+        }
+.chattab {
+    display: flex;
+}
+.add-chat {
+    display: block;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    color: #333;
+    cursor: pointer;
+}
+.remove-chat {
+    border: none;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+.add-chat:hover {
+    background-color: #f5f5f5;
+}
+
+.conversation-panel {
+    flex: 3;
+    padding: 10px;
+    overflow-y: scroll;
+}
+
+.conversation {
+    display: flex;
+    flex-direction: column;
+}
+
+.message {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+    .message.user {
+        background-color: ghostwhite;
+    }
+    .message.system {
+        background-color: mistyrose;
+    }
+
+    .message-content {
+        all: unset;
+        flex: 1;
+        margin-left: 10px;
+        padding: 10px;
+        border: none;
+        background-color: #f5f5f5;
+        height: 10px; /* Set height to auto */
+        resize: none; /* Remove resize property */
+    }
+
+    .message select {
+        margin: 10px, ;
+        padding: 5px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        color: #333;
+        cursor: pointer;
+    }
+
+    .message .remove-message {
+        background-color: transparent;
+        border: none;
+        color: #ccc;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+        .message .remove-message:hover {
+            color: #333;
+        }
+
+.settings-panel {
+    flex: 1;
+    background-color: #f5f5f5;
+    transition: all 0.3s ease-in-out;
+    transform: translateX(100%);
+    position: absolute;
+    right: 0;
+    position: fixed; /* Stay in place */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    transition: 0.5s;
+}
+
+    .settings-panel.open {
+        transform: translateX(0%);
+    }
+
+.settings {
+    padding: 10px;
+}
+
+.setting {
+    margin-bottom: 10px;
+}
+
+    .setting label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .setting input[type="text"],
+    .setting input[type="number"] {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        border: none;
+        background-color: #fff;
+    }
+
+    .setting input[type="checkbox"] {
+        margin-right: 10px;
+    }
+
+    .setting label {
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+/* Footer */
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f5f5f5;
+    padding: 10px;
+    box-shadow: 0px -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.add-message,
+.send-conversation {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    color: #333;
+    padding: 10px;
+    cursor: pointer;
+}
+
+    .voice-input:hover,
+    .add-message:hover,
+    .send-conversation:hover {
+        background-color: #f5f5f5;
+    }
+
+.send-conversation {
+    background-color: #333;
+    color: #fff;
+    border: none;
+}
+
+    .send-conversation:hover {
+        background-color: #444;
+    }
+
+/* Error message */
+.error-message {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    padding: 10px;
+    background-color: #f44336;
+    color: #fff;
+    border-radius: 5px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+    .error-message.hidden {
+        display: none;
+    }
+
+.close-error {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+
+#buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+    #buttons button {
+        font-size: 1rem;
+        padding: 1rem;
+        width: calc(50% - 0.25rem);
+    }
+
+
+.record {
+    background: #0088cc;
+    text-align: center;
+    color: white;
+}
+
+    .record:hover, .record:focus {
+        box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 1);
+        background: #0ae;
+    }
+
+    .record:active {
+        box-shadow: inset 0px 0px 20px rgba(0,0,0,0.5);
+        transform: translateY(2px);
+    }
+
+.recording {
+    background: red;
+    text-align: center;
+    color: white;
+}
+
+.stop {
+    font-size: 1rem;
+    background: #0088cc;
+    text-align: center;
+    color: white;
+    border: none;
+    transition: all 0.2s;
+    padding: 0.5rem;
+}
+
+    .stop:hover, .stop:focus {
+        box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 1);
+        background: #0ae;
+    }
+
+    .stop:active {
+        box-shadow: inset 0px 0px 20px rgba(0,0,0,0.5);
+        transform: translateY(2px);
+    }

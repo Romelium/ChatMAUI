@@ -1,0 +1,175 @@
+﻿@page "/"
+
+@using Akavache
+@using Auxilium
+@using System.Text.Json
+@using System.Text
+@using System.Net.Http.Headers
+@using System.Reactive.Linq
+@using System.Linq
+@using System.Text.Json.Serialization
+
+<div class="header">
+	<div class="header-left">
+		<button class="conversation-toggle" @onclick="(()=>isConversationTabsOpen = !isConversationTabsOpen)">Chats</button>
+	</div>
+	<div class="header-middle">
+		<input type="text" class="title" @bind="@chats[activeChatIndex].name"/>
+	</div>
+	<div class="header-right">
+		<button class="settings-toggle" @onclick="(()=>isSettingsOpen = !isSettingsOpen)">Settings</button>
+	</div>
+</div>
+
+<div class="main">
+	<div class="chattabs-panel @(isConversationTabsOpen ? "open" : "")">
+		<div class="chattabs">
+			<ul>
+				@for (int i = chats.Count; i-->0;)
+				{
+					int j = i;
+					<li class="chattab">
+						<a href="#" @onclick="(()=>SwitchChat(j))">@chats[j].name</a>
+						<button class="remove-chat" @onclick="(() => RemoveChat(j))">X</button>
+					</li>
+				}
+			</ul>
+			<button class="add-chat" @onclick="AddChat">Add Chat</button>
+		</div>
+	</div>
+	<div class="conversation-panel">
+		<div class="conversation">
+			@foreach (var message in activeChat.messages)
+			{
+				<div class="message @(message.role)">
+					<button class="remove-message" @onclick="(() => RemoveMessage(message))">X</button>
+					<select class="message-role" @bind="@message.role">
+						<option value="user">User</option>
+						<option value="assistant">Assistant</option>
+						<option value="system">System</option>
+					</select>
+					<textarea class="message-content" @bind="@message.content" oninput="this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px';"></textarea>
+				</div>
+			}
+		</div>
+	</div>
+	<div class="settings-panel @(isSettingsOpen ? "open" : "")">
+		<div class="settings">
+			<div class="setting">
+				<label for="apiKey">API Key</label>
+				<input type="text" id="apiKey" @bind="@apiKey" />
+			</div>
+			<div class="setting">
+				<label for="temperature">Temperature</label>
+				<input type="number" id="temperature" @bind="@activeChat.temperature" />
+			</div>
+			<div class="setting">
+				<label for="maxTokens">Max Tokens</label>
+				<input type="number" id="maxTokens" @bind="@activeChat.max_tokens" />
+			</div>
+			<div class="setting">
+				<label for="topP">Top P</label>
+				<input type="number" id="topP" @bind="@activeChat.top_p" />
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="footer">
+	<button class="add-message" @onclick="AddMessage">Add Message</button>
+	<button class="send-conversation" @onclick="SendChat">Send Chat</button>
+</div>
+<div role="alert" class="error-message @(string.IsNullOrEmpty(errorMessage) ? "hidden" : "")">
+	@errorMessage
+	<button type="button" class="close-error" data-dismiss="alert" aria-label="Close" @onclick="() => errorMessage = string.Empty">
+		<span aria-hidden="true">&times;</span>
+	</button>
+</div>
+
+@code {
+	private readonly static Chat defaultChat = new Chat { name = DateTime.Now.ToString("s"), temperature = 0.7, max_tokens = 150, top_p = 0.9 };
+	private List<Chat> chats = new List<Chat>() { defaultChat };
+	private int activeChatIndex;
+	private Chat activeChat => chats[activeChatIndex];
+	private string apiKey = "";
+	private bool isConversationTabsOpen = false;
+	private bool isSettingsOpen = false;
+	private string errorMessage = "";
+
+	protected override async Task OnInitializedAsync()
+	{
+		// Load variables from Akavache
+		async Task<T> GetObjectOrDefault<T>(string key, T defaultValue)
+		{
+			if (BlobCache.UserAccount.GetCreatedAt(key) != null)
+				return await BlobCache.UserAccount.GetObject<T>(key);
+			else
+				return defaultValue;
+		}
+		apiKey = await GetObjectOrDefault("apiKey", ""); 
+		chats = await GetObjectOrDefault("chats", chats);
+		activeChatIndex = await GetObjectOrDefault("activeChatIndex", chats.Count - 1);
+
+		base.OnInitialized();
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		base.OnAfterRender(firstRender);
+
+		// Save variables to Akavache
+		try
+		{
+			await BlobCache.UserAccount.InsertObject("apiKey", apiKey);
+			await BlobCache.UserAccount.InsertObject("chats", chats);
+			await BlobCache.UserAccount.InsertObject("activeChatIndex", activeChatIndex);
+		}
+		catch (Exception ex)
+		{
+			errorMessage += "Error saving variables: " + ex.Message;
+		}
+	}
+
+	private void AddChat()
+	{
+		chats.Add(defaultChat.Clone());
+		chats.Last().name = DateTime.Now.ToString("s");
+	}
+
+	private void AddMessage()
+	{
+		activeChat.messages.Add(new ChatMessage { role = "user" });
+	}
+	private void RemoveMessage(ChatMessage message)
+	{
+		activeChat.messages.Remove(message);
+	}
+
+	private async Task SendChat()
+	{
+		var response = await ChatGPTAPI.GenerateChatCompletion(activeChat, apiKey);
+
+		if (response.error != null)
+		{
+			errorMessage += response.error.message;
+			return;
+		}
+
+		var message = response.choices.FirstOrDefault()?.message;
+		activeChat.messages.Add(message);
+	}
+	private void RemoveChat(int i)
+	{
+		chats.Remove(chats[i]);
+		if (chats.Count == 0)
+			AddChat();
+		if (activeChatIndex >= chats.Count)
+			activeChatIndex = chats.Count - 1;
+	}
+
+	private void SwitchChat(int i)
+	{
+		activeChatIndex = i;
+	}
+
+}
