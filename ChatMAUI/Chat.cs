@@ -2,7 +2,7 @@
 using System.Text;
 using System.Net.Http.Headers;
 using System.Text.Json;
-
+using System.Text.Json.Serialization;
 
 namespace Auxilium
 {
@@ -10,8 +10,9 @@ namespace Auxilium
     /// Represents a request to generate a chat completion.
     /// </summary>
     public class Chat
-    {
-        public string name { get; set; }
+	{
+		[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		public string name { get; set; }
         /// <summary>
         /// ID of the model to use. See the model endpoint compatibility table for details on which models work with the Chat API.
         /// </summary>
@@ -189,8 +190,12 @@ namespace Auxilium
             // Set the API key in the Authorization header
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
-            // Serialize the chat object to JSON
-            string json = JsonSerializer.Serialize(chat);
+            // Remove name before sending
+            var chatSend = chat.Clone();
+            chatSend.name = null;
+
+			// Serialize the chat object to JSON
+			string json = JsonSerializer.Serialize(chatSend, JsonSerializerOptions.Default);
 
             // Create a new HTTP request with the JSON payload
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
