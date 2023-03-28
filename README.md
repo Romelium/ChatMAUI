@@ -2,6 +2,8 @@
 
 ChatMAUI is an open-source, cross-platform project designed to provide a simple Blazor page for people to test and experiment with the ChatGPT API or use it on their mobile devices. 
 
+![1.0.0](<images/1.0.0.PNG> "1.0.0")
+
 ## Features
 
 - Add and remove multiple chat sessions
